@@ -1,0 +1,441 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{\vspace{-2.5em}}
+
+\begin{document}
+
+\section{Google Data Analytics Professional
+Capstone}\label{google-data-analytics-professional-capstone}
+
+\subsubsection{Case Study : Should Your City Have More Restaurants with
+Veg
+Options?}\label{case-study-should-your-city-have-more-restaurants-with-veg-options}
+
+\begin{figure}
+\includegraphics[width=0.9\linewidth]{vegan_image} \end{figure}
+
+\paragraph{DISCLAIMER}\label{disclaimer}
+
+The vegan/vegatarian restaurants dataset used for this report has many
+potential sources of error. The dataset appears to be last updated in
+2016, many incomplete values, and I couldn't validate if the dataset was
+a full aggregate of vegan/vegetarian restaurants. While the data was
+cleaned for the incomplete values, the other potential sources of error
+are still there. Correspondingly, any conclusion from this report should
+be viewed with skepticism.
+
+\subsubsection{1. Introduction}\label{introduction}
+
+Restaurants with vegan and vegetarian options are an integral option for
+people who are vegan, vegetarian, flexitarian, pescatarian, and for
+those who simply want to try something different. While we know there
+are many restaurants out there, it is hard to know where the options are
+lacking for certain cities and states. By analyzing data on these
+restaurant locations and census information, I hope to understand which
+cities are ripe for more options.
+
+\subsubsection{2. Scenario}\label{scenario}
+
+As a data analyst friend of someone who is open to moving anywhere with
+the intention of opening a vegan/vegetarian restaurant, I intend to
+supply them with the best city locations. I will refer to
+vegan/vegetarian as veg throughout this report for brevity. My friend
+also suspects that the density of these restaurants is likely
+contributed by the population's voting patterns. So they would like to
+ensure that this is not left off as a lurking variable.
+
+\subsubsection{Data Sources:}\label{data-sources}
+
+\paragraph{Thanks to these amazing public datasets this report was made
+possible!}\label{thanks-to-these-amazing-public-datasets-this-report-was-made-possible}
+
+County Presidential Election Results:\\
+MIT Election Data and Science Lab, 2018, ``County Presidential Election
+Returns 2000-2020'', \url{https://doi.org/10.7910/DVN/VOQCHQ}, Harvard
+Dataverse, V12; countypres\_2000-2020.tab {[}fileName{]},
+UNF:6:KNR0/XNVzJC+RnAqIx5Z1Q== {[}fileUNF{]}
+
+City Census Data:
+\url{https://www.census.gov/data/tables/time-series/demo/popest/2020s-total-cities-and-towns.html\#v2023}
+
+State Census Data:
+\url{https://www.census.gov/data/tables/time-series/demo/popest/2020s-state-total.html}
+
+State Presidential Election Results:
+\url{https://www.fec.gov/documents/4228/federalelections2020.xlsx}
+
+Vegan/Vegetarian Restaurants:
+\url{https://www.kaggle.com/datasets/datafiniti/vegetarian-vegan-restaurants/versions/1?resource=download}
+
+\subsubsection{3. Process}\label{process}
+
+Tools: Since none of the datasets are very large, I decided to use
+Google Sheets to Combine and Clean
+
+First step was to import all data sources into Google Sheets. Once the
+data was imported. all rows with empty city and province information
+were filtered out. Consequently any restaurant with a value of ``TRUE''
+in the isCLOSED field were filtered out. To pare down to pertinent
+information I used the following query to get just city and state
+information:
+
+\begin{verbatim}
+=Query(US_Restaurants_List_Raw!A1:AC18156, "SELECT C,Z 
+\end{verbatim}
+
+Next was a couple of formulas to select distinct cities, and count the
+number of restaurants in each city:
+
+\begin{verbatim}
+=UNIQUE(A5:A17538)
+
+=COUNTIF(A$5:A$17538,E4)
+\end{verbatim}
+
+With this done, next was to combine this with city population data:
+
+\begin{verbatim}
+#Change city name to allow matches
+
+=LEFT(B2,FIND("city",B2,1)-2)
+
+#Find the matches and add to existing list
+=VLOOKUP(E4,City_Populations!C$2:D$324,2,false))
+\end{verbatim}
+
+This list was then filtered down to populations of over 300,000. Then, a
+value for population/Restaurant was calculated for each city.
+
+\begin{verbatim}
+Population per Restaurant = Census Population/# of restaurants
+\end{verbatim}
+
+These steps were repeated for state population data. The next step was
+to investigate the presidential election results by state and city. To
+do this first the sheet with county presidential election results needed
+to be adjusted:
+
+\begin{verbatim}
+# Filter to the correct year of 2020
+
+# Match county to city
+
+=VLOOKUP(C3, 'City-County'!A$1:E$311121,2,FALSE)
+
+# Create unique list
+
+=UNIQUE(G3:G18069)
+
+# Sum votes for the county for Democrat
+
+=sumifs($E$3:$E$18069,$D$3:$D$18069,"DEMOCRAT",$G$3:$G$18069,$J3)
+
+# Sum votes for the county for Republican
+
+=SUMIFS($E$3:$E$18069,$D$3:$D$18069,"REPUBLICAN",$G$3:$G$18069,$J3)
+\end{verbatim}
+
+With the knowledge of the Population per Restaurant for both the city
+and the state, the \# of restaurants expected for the city to meet the
+state average can be found by the following:
+
+\begin{verbatim}
+Num of restaurants to meet state average = (People per Restaurant_city / People per Restaurant_state) * Current_Rest_City - Current_Rest_City
+
+#Normalize for population per 100,000
+
+Num of restaurants to meet state average / City_Population * 100000
+\end{verbatim}
+
+This leaves values for the number of restaurants to meet state average
+per 100,000 people in the city.
+
+Next, a rough Liberalism score was calculated through this formula:
+
+\begin{verbatim}
+Liberalism Score = Democrat votes/(Republican Votes + Democrat Votes)
+\end{verbatim}
+
+This process was then repeated for the states, though this process was
+much easier due to the format of the data.
+
+These were graphed to see the strength of the relationship between the
+two. Using this relationship data was another way to calculate the
+number of extra veg restaurants a city needs. This was simply done by
+graphing city liberalism score by population/restaurant by city. Using
+this corresponding line of best fit calculation, and the same
+calculations done previously a number of veg restaurants needed per city
+normalized per 100,000 people was calculated.
+
+To practice my skills in BigQuery and R, I ran some databaset processing
+through them as well. In R, I first loaded all of the libraries I would
+potentially need:
+
+\begin{verbatim}
+#load libraries 
+library(tidyverse) #calculations
+library(lubridate) #dates 
+library(hms) #time
+library(data.table) #exporting data frame
+library(dplyr)
+library(ggplot2)
+\end{verbatim}
+
+Load csv file with restaurant data:
+
+\begin{verbatim}
+vegdata <- read.csv("C:\\Users\\djenn\\OneDrive\\Documents\\Case Study\\vegdataset.csv")
+\end{verbatim}
+
+Take a quick look at the dataset
+
+\begin{verbatim}
+tibble::glimpse(vegdata)
+\end{verbatim}
+
+Get column names and total number of restaurants
+
+\begin{verbatim}
+colnames(vegdata)
+
+
+nrow(vegdata)
+\end{verbatim}
+
+Further information for clarity:
+
+\begin{verbatim}
+#Get total number of restaurants by City
+vegdata %>%
+  select(city) %>%
+  count(city)
+
+#Get total number of restaurants by State
+vegdata %>%
+  select(province) %>%
+  count(province)
+
+#See how many restaurants are closed
+vegdata %>%
+  count(isClosed)
+  
+#Filter out closed restaurants
+vegdata %>%
+  filter(isClosed = TRUE )
+  
+\end{verbatim}
+
+Generate map plot based on coordinates:
+
+\begin{verbatim}
+ggplot(vegdata, aes(x = long, y = lat)) +
+  geom_point() +
+  coord_cartesian(xlim = c(-125, -65), ylim =c(24, 50)) +
+  labs(x = "Longitude", y = "Latitude") +
+  ggtitle("Location of Restaurants offering Veg Options") +
+  theme(plot.title = element_text(face = "bold",
+                                  margin = margin(10, 0, 10, 0), 
+                                  size = 16))
+\end{verbatim}
+
+Then with BigQuery, joining the city census data with the city
+restaurant data. Filtering out cities with 300k people and under.
+
+\begin{verbatim}
+SELECT DISTINCT vegdata.city, vegdata.province, census_city.population, census_state.population
+FROM vegdata
+INNER JOIN vegdata ON vegdata.city = census_city.city
+INNER JOIN census_state ON vegdata.province = census_state.state
+WHERE census_city.city < 300000
+AND vegdata.city is NOT NULL
+AND vegdata.province is NOT NULL;
+\end{verbatim}
+
+Counting the number of restaurants in the dataset that are not null:
+
+\begin{verbatim}
+SELECT COUNT(address)
+FROM vegdata
+WHERE address is NOT NULL
+\end{verbatim}
+
+Then counting the number of unique cities in the restaurant database:
+
+\begin{verbatim}
+SELECT COUNT(DISTINCT city) AS [Count]
+FROM vegdata
+WHERE city is NOT NULL
+\end{verbatim}
+
+Separating and cleaning up the county political results:
+
+\begin{verbatim}
+SELECT county, party, votes
+FROM political_county
+WHERE party = 'DEMOCRAT'
+AND year = 2020
+ORDER BY county
+
+SELECT county, party, votes
+FROM political_county
+WHERE party = 'REPUBLICAN'
+AND year = 2020
+ORDER BY county
+\end{verbatim}
+
+\subsubsection{4. Analysis and Share}\label{analysis-and-share}
+
+The data analysis has been stored and prepared for a further analysis.
+Visualizations come from Google Sheets, R Studio, and Tableau. The
+objective of the analysis was to determine which cities would be best
+suited for a new vegan/vegetarian restaurant and to see if there is an
+existing political bias that could act as a lurking variable.
+
+To first visualize this data geographically maps were made in Tableau
+and R Studio showing them:
+
+\begin{figure}
+\includegraphics[width=0.9\linewidth]{VegOptionsMap} \caption{my caption}\label{fig:figurename}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.9\linewidth]{tableau_veg_options_map} \caption{Tableau Version}\label{fig:figurename2}
+\end{figure}
+
+Now following onto the data processing done previously, the political
+analysis by state corresponding to vegan restaurant density resulted in
+the following:
+
+\begin{figure}
+\includegraphics[width=0.9\linewidth]{veg_rest_lib_state} \end{figure}
+
+The corresponding R squared value for this was 0.26 which indicates a
+moderate-weak correlation. I will posit that further analysis to
+determine whether the data can be deemed normal was not done.
+
+After this, the political analysis by city corresponding to vegan
+restaurant density resulted in the following:
+
+\begin{figure}
+\includegraphics[width=0.9\linewidth]{veg_rest_lib_city} \end{figure}
+
+The corresponding R squared value for this 0.21 which is also a
+moderate-weak correlation. However, using this as explained in the
+process stage, the variation of the city's from this line of best fit
+was done.
+
+With this information in hand, it can be shown which cities veg
+restaurant density are the lowest in comparison to their expected
+amount. As explained in the Process step, the first is the corresponding
+calculations from the veg restaurant density by city variance to the
+expected values by liberalism score:
+
+\begin{figure}
+\includegraphics[width=0.9\linewidth]{veg_rest_needed_corr} \end{figure}
+
+The other method explained in the process step for determining this top
+ten was the veg restaurant density by city variance to the veg
+restaurant density by state. That top ten resulted in:
+
+\begin{figure}
+\includegraphics[width=0.9\linewidth]{veg_rest_needed} \end{figure}
+
+Taking the average of the values from these two charts resulted in the
+combined chart.
+
+\begin{figure}
+\includegraphics[width=0.9\linewidth]{veg_rest_needed_comb} \end{figure}
+
+\subsubsection{6. Act}\label{act}
+
+After analyzing the information on the veg restaurant density by city,
+there are definitely cities with the opportunity to open more veg
+restaurants. Using the values shown through the analysis phase I would
+recommend the following cities as the best cities for opening a veg
+restaurant:
+
+\begin{itemize}
+\tightlist
+\item
+  Stockton
+\item
+  Bakersfield
+\item
+  Corpus Christi
+\item
+  San Jose
+\item
+  El Paso
+\end{itemize}
+
+Those five cities had the highest combined average of deviation from
+expected based upon liberalism scores and state averages. While I
+recommend these cities, to anyone else out there, please open a veg
+restaurant anywhere you can and want to!
+
+\end{document}
