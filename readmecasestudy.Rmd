@@ -5,6 +5,10 @@
 
 <br>
 
+```{r figurename8, echo=FALSE, fig.cap="", out.width = '90%'}
+knitr::include_graphics("C:\\Users\\djenn\\OneDrive\\Documents\\Case Study\\vegan_image.png")
+```
+
 #### DISCLAIMER
 The vegan/vegatarian restaurants dataset used for this report has many potential sources of error. The dataset appears to be last updated in 2016, many incomplete values, and I couldn't validate if the dataset was a full aggregate of vegan/vegetarian restaurants. While the data was cleaned for the incomplete values, the other potential sources of error are still there. Correspondingly, any conclusion from this report should be viewed with skepticism.
 
@@ -18,9 +22,24 @@ Restaurants with vegan and vegetarian options are an integral option for people 
 
 As a data analyst friend of someone who is open to moving anywhere with the intention of opening a vegan/vegetarian restaurant, I intend to supply them with the best city locations. I will refer to vegan/vegetarian as veg throughout this report for brevity. My friend also suspects that the density of these restaurants is likely contributed by the population's voting patterns. So they would like to ensure that this is not left off as a lurking variable.
 
-Data Sources:
+### Data Sources:
 
-  
+#### Thanks to these amazing public datasets this report was made possible!
+
+County Presidential Election Results:  
+MIT Election Data and Science Lab, 2018, "County Presidential Election Returns 2000-2020", https://doi.org/10.7910/DVN/VOQCHQ, Harvard Dataverse, V12; countypres_2000-2020.tab [fileName], UNF:6:KNR0/XNVzJC+RnAqIx5Z1Q== [fileUNF]
+
+City Census Data:
+https://www.census.gov/data/tables/time-series/demo/popest/2020s-total-cities-and-towns.html#v2023
+
+State Census Data:
+https://www.census.gov/data/tables/time-series/demo/popest/2020s-state-total.html
+
+State Presidential Election Results:
+https://www.fec.gov/documents/4228/federalelections2020.xlsx
+
+Vegan/Vegetarian Restaurants:
+https://www.kaggle.com/datasets/datafiniti/vegetarian-vegan-restaurants/versions/1?resource=download
 
 ### 3. Process
 
@@ -175,7 +194,6 @@ ggplot(vegdata, aes(x = long, y = lat)) +
 Then with BigQuery, joining the city census data with the city restaurant data. Filtering out cities with 300k people and under. 
 
 ```
-
 SELECT DISTINCT vegdata.city, vegdata.province, census_city.population, census_state.population
 FROM vegdata
 INNER JOIN vegdata ON vegdata.city = census_city.city
@@ -185,6 +203,23 @@ AND vegdata.city is NOT NULL
 AND vegdata.province is NOT NULL;
 
 ```
+Counting the number of restaurants in the dataset that are not null:
+
+```
+SELECT COUNT(address)
+FROM vegdata
+WHERE address is NOT NULL
+
+```
+
+Then counting the number of unique cities in the restaurant database:
+
+```
+SELECT COUNT(DISTINCT city) AS [Count]
+FROM vegdata
+WHERE city is NOT NULL
+```
+
 Separating and cleaning up the county political results:
 
 ```
@@ -201,12 +236,6 @@ AND year = 2020
 ORDER BY county
 
 ```
-Using SQL to generate liberalism score for states:
-
-```
-NEED TO FINISH
-ALTER presidential_state_results
-ADD liberalism score
 
 
 ### 4. Analysis and Share
@@ -261,11 +290,11 @@ knitr::include_graphics("C:\\Users\\djenn\\OneDrive\\Documents\\Case Study\\veg_
 
 After analyzing the information on the veg restaurant density by city, there are definitely cities with the opportunity to open more veg restaurants. Using the values shown through the analysis phase I would recommend the following cities as the best cities for opening a veg restaurant:
 
-*Stockton
-*Bakersfield
-*Corpus Christi
-*San Jose
-*El Paso
+* Stockton
+* Bakersfield
+* Corpus Christi
+* San Jose
+* El Paso
 
 Those five cities had the highest combined average of deviation from expected based upon liberalism scores and state averages. While I recommend these cities, to anyone else out there, please open a veg restaurant anywhere you can and want to!
 
